@@ -1,0 +1,18 @@
+[package]
+name = "ingester"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = { version = "0.6.20", features = ["macros"] }
+base64 = "0.21.4"
+chrono = { version = "0.4.31", features = ["serde"] }
+rmp-serde = "1.1.2"
+serde = { version = "1.0.188", features = ["serde_derive"] }
+serde_json = "1.0.107"
+tokio = { version = "1.32.0", features = ["tokio-macros", "full"] }
+tower-http = { version = "0.4.4", features = ["fs", "trace"] }
+tracing = "0.1.37"
+tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
