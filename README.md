@@ -20,6 +20,7 @@
 
   - Tracing?
   - Logging?
+  - GCP deploy?
 
 ## JS SDK
   - WASM module:
