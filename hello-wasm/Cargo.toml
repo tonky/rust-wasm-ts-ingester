@@ -24,12 +24,13 @@ serde_json = "1.0.107"
 # code size when deploying.
 console_error_panic_hook = { version = "0.1.7", optional = true }
 thiserror = "1.0.48"
+web-sys = { version = "0.3.64", features = ["console"] }
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.34"
 
-[profile.release]
+# [profile.release]
 # Tell `rustc` to optimize for small code size.
-opt-level = "s"
-lto = true
+# opt-level = "s"
+# lto = true
 

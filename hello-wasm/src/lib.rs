@@ -2,6 +2,7 @@ mod utils;
 
 // use anyhow::Result;
 use wasm_bindgen::prelude::*;
+use web_sys::console;
 use serde_json::{Value, json};
 use serde::{Serialize,Deserialize};
 use thiserror::Error;
@@ -9,12 +10,13 @@ use rmp_serde::{Deserializer, Serializer};
 use chrono::{DateTime, Utc, ParseError, ParseResult};
 use base64::{engine::general_purpose, Engine as _, DecodeError};
 
-/*
 #[wasm_bindgen]
 extern "C" {
     fn alert(s: &str);
+
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
 }
-*/
 
 #[derive(Error, Debug)]
 pub enum MyError {
@@ -23,31 +25,28 @@ pub enum MyError {
 }
 
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
-struct Metric {
-    client_id: u32,
-    auth_token: String,
+#[wasm_bindgen(getter_with_clone)]
+pub struct Metric {
+    pub client_id: u32,
+    pub auth_token: String,
     datetime: DateTime<chrono::Utc>
 }
 
 #[wasm_bindgen]
+impl Metric {
+    #[wasm_bindgen(constructor)]
+    pub fn new(cid: u32, at: &str ) -> Metric {
+        Metric { client_id: cid, auth_token: at.into(), datetime: chrono::Utc::now() }
+    }
+
+    pub fn mp(&self) -> String {
+        format!("Id: {}", self.client_id)
+    }
+}
+
+#[wasm_bindgen]
 pub fn greet(name: &str) -> String {
-    // alert("Hello, hello-wasm!");
-    
-    let m = Metric{client_id: 1, auth_token: "auth".into(), datetime: chrono::Utc::now()};
-
-    println!(">> example json: {}", json!(m));
-
-    let mut buf = Vec::new();
-    m.serialize(&mut Serializer::new(&mut buf)).unwrap();
-
-    println!("{:?} - {:?}", m, buf);
-
-//*
-    let enc = general_purpose::STANDARD.encode(&buf);
-    println!("encoded b64: {:?}", enc);
-//*/
-    // String::from_utf8_lossy(&buf).to_string()
-    format!("Hello, {}!", enc)
+    format!("Hello again, {}!", name)
 }
 
 #[wasm_bindgen]
@@ -78,7 +77,8 @@ let datetime_utc = datetime.with_timezone(&Utc);
     let mut buf = Vec::new();
     m.serialize(&mut Serializer::new(&mut buf)).unwrap();
 
-    println!("{:?} - {:?}", m, buf);
+    console::log_1(&"Hello using web-sys".into());
+    log(&format!("Rust log 2: {:?} - {:?}", m, &buf));
 
     let enc = general_purpose::STANDARD.encode(&buf);
     println!("encoded b64: {:?}", enc);

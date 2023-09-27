@@ -1,8 +1,10 @@
 use axum::{
     body::Bytes,
     debug_handler,
+    Json,
+    response::{Response, IntoResponse},
     routing::{get,post},
-    Router, response::{Response, IntoResponse}, Json,
+    Router,
 };
 use serde_json::{Value, json};
 use serde::{Serialize,Deserialize};
@@ -21,7 +23,7 @@ async fn main() {
         tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "example_static_file_server=debug,tower_http=debug,axum=debug".into()),
+                .unwrap_or_else(|_| "hello-wasm=debug,tower_http=debug,axum=debug".into()),
         )
         .with(tracing_subscriber::fmt::layer())
         .init();
@@ -51,31 +53,8 @@ struct Metric {
 
 #[debug_handler]
 async fn ingest_metrics(body: Bytes) -> Json<Value> {
-    println!(">> got body: {:?}", body);
-/*
-    let mut buf = Vec::new();
-
-    let m = Metric{client_id: 1, auth_token: "auth".into(), datetime: chrono::Utc::now()};
-
-    println!(">> example json: {}", json!(m));
-
-    m.serialize(&mut Serializer::new(&mut buf)).unwrap();
-
-    println!("{:?} - {:?}", m, buf);
-
-    println!("b64: {}", general_purpose::STANDARD.encode(&buf));
-
-    let ds: Metric = rmp_serde::from_slice(&buf).unwrap();
-    println!("Deserialized: {:?}", ds);
- */
     let dec = general_purpose::STANDARD.decode(&body).unwrap();
-    println!("decoded b64: {:?}", dec);
-
-    // let ds: Metric = rmp_serde::from_slice(&buf).unwrap();
     let dr: Metric = rmp_serde::from_slice(&dec).unwrap();
-
-    // println!("Deserialized example: {:?}", ds);
-    println!("Deserialized request: {:?}", dr);
 
     Json(json!(dr))
 }
@@ -86,3 +65,9 @@ fn serve_static() -> Router {
     Router::new()
         .nest_service("/wasm", serve_wasm)
 }
+
+/*
+    let mut buf = Vec::new();
+    let m = Metric{client_id: 1, auth_token: "auth".into(), datetime: chrono::Utc::now()};
+    m.serialize(&mut Serializer::new(&mut buf)).unwrap();
+ */

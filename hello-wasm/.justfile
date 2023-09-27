@@ -2,8 +2,8 @@ webpack-watchr:
 	# ls index.js src/** |  entr -cr just rebuild-all
 	npm run build-watch
 
-webpack:
+pack:
   npm run build
 
-wasm:
+build:
   wasm-pack build --target bundler

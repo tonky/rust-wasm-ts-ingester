@@ -1,24 +1,14 @@
-// Note that a dynamic `import` statement here is required due to
-// webpack/webpack#6615, but in theory `import { greet } from './pkg';`
-// will work here one day as well!
-/*
-const rust = import('./pkg');
+import { greet, message } from "./pkg/index.js";
 
-console.log("running2...");
+const button_v1 = document.getElementById("send_v1");
+button_v1.addEventListener("click", (event) => {
+  var msg = message(2, "token2", "2014-12-28T12:00:09Z");
 
-rust
-  .then(m => console.log(m.greet('World!')))
-  .catch(console.error);
+  console.log("posting with token2");
 
+  postJSON(msg);
+});
 
-rust
-  .then(m => console.log(m.message(1, "token", "2014-12-28T12:00:09Z")))
-  .catch(console.error);
-*/
-
-// import * as wasm from "./pkg";
-// const greeting  = wasm.greet("Joe");
-import { greet, message } from "./pkg";
 const greeting  = greet("Joe");
 console.log("Joe");
 
