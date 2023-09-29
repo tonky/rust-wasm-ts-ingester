@@ -1,3 +1,6 @@
+// mod v1;
+use common::MetricV1;
+
 use axum::{
     body::Bytes,
     debug_handler,
@@ -44,23 +47,25 @@ async fn main() {
         .unwrap();
 }
 
+/*
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 struct Metric {
     client_id: u32,
     auth_token: String,
     datetime: DateTime<chrono::Utc>
 }
+ */
 
 #[debug_handler]
 async fn ingest_metrics(body: Bytes) -> Json<Value> {
     let dec = general_purpose::STANDARD.decode(&body).unwrap();
-    let dr: Metric = rmp_serde::from_slice(&dec).unwrap();
+    let dr: MetricV1 = rmp_serde::from_slice(&dec).unwrap();
 
     Json(json!(dr))
 }
 
 fn serve_static() -> Router {
-    let serve_wasm = ServeDir::new("hello-wasm/dist");
+    let serve_wasm = ServeDir::new("../hello-wasm/dist");
 
     Router::new()
         .nest_service("/wasm", serve_wasm)

@@ -1,4 +1,5 @@
 mod utils;
+mod v1;
 
 // use anyhow::Result;
 use wasm_bindgen::prelude::*;
@@ -10,13 +11,13 @@ use rmp_serde::{Deserializer, Serializer};
 use chrono::{DateTime, Utc, ParseError, ParseResult};
 use base64::{engine::general_purpose, Engine as _, DecodeError};
 
-#[wasm_bindgen]
-extern "C" {
-    fn alert(s: &str);
 
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
+/*
+#[wasm_bindgen]
+pub fn new_v1() -> v1::V1 {
+    v1::V1::new()
 }
+ */
 
 #[derive(Error, Debug)]
 pub enum MyError {
@@ -24,6 +25,23 @@ pub enum MyError {
     ChronoParseError(chrono::ParseError, String),
 }
 
+/*
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[wasm_bindgen]
+pub struct NaiveDateTime {
+    pub millisecond: u16
+}
+
+#[wasm_bindgen]
+impl NaiveDateTime {
+    #[wasm_bindgen(constructor)]
+    pub fn new(ms: u16) -> NaiveDateTime {
+        NaiveDateTime { millisecond: ms }
+    }
+}
+*/
+
+/*
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 #[wasm_bindgen(getter_with_clone)]
 pub struct Metric {
@@ -43,6 +61,7 @@ impl Metric {
         format!("Id: {}", self.client_id)
     }
 }
+ */
 
 #[wasm_bindgen]
 pub fn greet(name: &str) -> String {
@@ -70,7 +89,7 @@ let datetime_utc = datetime.with_timezone(&Utc);
         // Error(e) => { Err(JsError::new("message"))}
     };
 
-    let m = Metric{client_id, auth_token: auth_token.into(), datetime: chrono_dt.into()};
+    let m = common::MetricV1{client_id, auth_token: auth_token.into(), datetime: chrono_dt.into()};
 
     // Ok(json!(m).to_string())
 //*
@@ -78,7 +97,7 @@ let datetime_utc = datetime.with_timezone(&Utc);
     m.serialize(&mut Serializer::new(&mut buf)).unwrap();
 
     console::log_1(&"Hello using web-sys".into());
-    log(&format!("Rust log 2: {:?} - {:?}", m, &buf));
+    // log(&format!("Rust log 2: {:?} - {:?}", m, &buf));
 
     let enc = general_purpose::STANDARD.encode(&buf);
     println!("encoded b64: {:?}", enc);

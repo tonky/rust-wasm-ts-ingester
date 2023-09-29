@@ -25,6 +25,7 @@ serde_json = "1.0.107"
 console_error_panic_hook = { version = "0.1.7", optional = true }
 thiserror = "1.0.48"
 web-sys = { version = "0.3.64", features = ["console"] }
+common = { path = "../common" }
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.34"
