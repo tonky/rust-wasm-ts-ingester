@@ -1,5 +1,5 @@
 mod utils;
-mod v1;
+pub mod v1;
 
 // use anyhow::Result;
 use wasm_bindgen::prelude::*;

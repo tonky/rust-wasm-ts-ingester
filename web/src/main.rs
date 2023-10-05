@@ -1,5 +1,6 @@
 // mod v1;
 use common::MetricV1;
+// use wasm;
 
 use axum::{
     body::Bytes,
@@ -16,7 +17,6 @@ use tower_http::{
     trace::TraceLayer,
 };
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-use rmp_serde::{Deserializer, Serializer};
 use chrono::DateTime;
 use base64::{engine::general_purpose, Engine as _};
 
@@ -34,7 +34,7 @@ async fn main() {
     // build our application with a single route
     let app = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
-        .route("/ingest", post(ingest_metrics))
+        .route("/v1/ingest", post(ingest_metrics_v1))
         .merge(serve_static());
 
     // run it with hyper on localhost:3000
@@ -47,19 +47,11 @@ async fn main() {
         .unwrap();
 }
 
-/*
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
-struct Metric {
-    client_id: u32,
-    auth_token: String,
-    datetime: DateTime<chrono::Utc>
-}
- */
-
 #[debug_handler]
-async fn ingest_metrics(body: Bytes) -> Json<Value> {
+async fn ingest_metrics_v1(body: Bytes) -> Json<Value> {
+    println!("ingest_metrics_v1: {:?}", &body);
     let dec = general_purpose::STANDARD.decode(&body).unwrap();
-    let dr: MetricV1 = rmp_serde::from_slice(&dec).unwrap();
+    let dr: hello_wasm::v1::MetricV1 = rmp_serde::from_slice(&dec).unwrap();
 
     Json(json!(dr))
 }
