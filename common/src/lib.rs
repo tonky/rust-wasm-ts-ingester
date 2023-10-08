@@ -7,3 +7,9 @@ pub struct MetricV1 {
     pub auth_token: String,
     pub datetime: DateTime<chrono::Utc>
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct MetricsResponse {
+    pub status: String,
+    pub count: u32
+}

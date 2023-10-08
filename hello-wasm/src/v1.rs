@@ -4,6 +4,9 @@ use serde::{Serialize,Deserialize};
 // use base64::engine;
 // use base64::{Engine as _, engine::{self, general_purpose}, alphabet};
 use base64::{alphabet, engine, engine::general_purpose, Engine as _, DecodeError};
+use wasm_bindgen::JsCast;
+use wasm_bindgen_futures::JsFuture;
+use web_sys::{Request, RequestInit, RequestMode, Response};
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[wasm_bindgen]

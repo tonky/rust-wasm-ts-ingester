@@ -3,7 +3,9 @@ pub mod v1;
 
 // use anyhow::Result;
 use wasm_bindgen::prelude::*;
-use web_sys::console;
+use wasm_bindgen_futures::JsFuture;
+use serde_wasm_bindgen;
+use web_sys::{console, Request, RequestInit, RequestMode, Response};
 use serde_json::{Value, json};
 use serde::{Serialize,Deserialize};
 use thiserror::Error;
@@ -11,6 +13,15 @@ use rmp_serde::{Deserializer, Serializer};
 use chrono::{DateTime, Utc, ParseError, ParseResult};
 use base64::{engine::general_purpose, Engine as _, DecodeError};
 
+// #[wasm_bindgen]
+pub enum Metric {
+    V1(v1::MetricV1)
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct MsgResponse {
+    pub status: String
+}
 
 /*
 #[wasm_bindgen]
@@ -106,6 +117,47 @@ let datetime_utc = datetime.with_timezone(&Utc);
     Ok(enc)
 //*/
 
+}
+
+#[wasm_bindgen]
+pub async fn post_metric(path: String, body: String) -> Result<JsValue, JsValue> {
+    let mut opts = RequestInit::new();
+    opts.method("POST");
+    opts.mode(RequestMode::Cors);
+    /*
+    let metric_json = match metric {
+        v1::MetricV1(m) => m.msgpk_b64(),
+        _ => String::from("{}")
+    };
+ */
+    opts.body(Some(&JsValue::from_str(&body)));
+
+    let url = format!("http://localhost:3000{}", path);
+
+    let request = Request::new_with_str_and_init(&url, &opts)?;
+
+    request
+        .headers()
+        .set("Accept", "application/vnd.github.v3+json")?;
+
+    let window = web_sys::window().unwrap();
+    let resp_value = JsFuture::from(window.fetch_with_request(&request)).await?;
+
+    // `resp_value` is a `Response` object.
+    assert!(resp_value.is_instance_of::<Response>());
+    let resp: Response = resp_value.dyn_into().unwrap();
+
+    // Convert this other `Promise` into a rust `Future`.
+    let json = JsFuture::from(resp.json()?).await?;
+
+    // Use serde to parse the JSON into a struct.
+    console::log_2(&">> got json: ".into(), &json);
+    let resp: common::MetricsResponse = serde_wasm_bindgen::from_value(json)?;
+
+    // Send the `Branch` struct back to JS as an `Object`.
+    // Ok(JsValue::from_serde(&resp).unwrap())
+    Ok(serde_wasm_bindgen::to_value(&resp)?)
+    // Ok(json)
 }
 
 #[cfg(test)]
