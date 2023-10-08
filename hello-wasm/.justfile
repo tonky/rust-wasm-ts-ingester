@@ -7,3 +7,6 @@ pack:
 
 build:
   wasm-pack build --target bundler
+
+t:
+  wasm-pack test --firefox

@@ -6,6 +6,7 @@ use axum::{
     body::Bytes,
     debug_handler,
     extract::State,
+    http::{HeaderValue, Method},
     Json,
     response::{Response, IntoResponse},
     routing::{get,post},
@@ -15,6 +16,7 @@ use serde_json::{Value, json};
 use serde::{Serialize,Deserialize};
 use std::{collections::HashMap, sync::{Arc, RwLock}};
 use tower_http::{
+    cors::{Any, CorsLayer},
     services::{ServeDir, ServeFile},
     trace::TraceLayer,
 };
@@ -46,7 +48,12 @@ async fn main() {
         .route("/", get(|| async { "Hello, World!" }))
         .route("/stats", get(stats))
         .route("/v1/ingest", post(ingest_metrics_v1))
-        .route("/v2/ingest", post(ingest_metrics_v2))
+        .route("/v2/ingest", post(ingest_metrics_v2)).layer(
+            CorsLayer::new()
+                // .allow_origin("http://localhost:3000".parse::<HeaderValue>().unwrap())
+                .allow_origin(Any)
+                .allow_methods([Method::POST]),
+        )
         .with_state(Arc::clone(&shared_state))
         .merge(serve_static());
 
