@@ -22,7 +22,8 @@
   1. Generate JS and TS bindings
   ```
       $ cd hello-wasm
-      $ wasm-pack build --target bundler
+      $ npm install
+      $ npm run build
   ```
   2. Run web server
   ```
@@ -30,7 +31,7 @@
       $ cargo run
   ```
 
-  3. Open test page on http://localhost:3000 and send v1 and v2 messages
+  3. Open test page on http://localhost:3000 and send v1 and v2 messages via buttons
 
   4. To run tests
   ```
