@@ -1,0 +1,17 @@
+web.axum: Axum
+web.axum.wasm: bundled WASM + JS + TS
+web.axum.rust: handlers + shared SDK types
+sdk: Rust to TS and JS SDK generator
+sdk.generator: wasm-bindgen + webpack
+sdk.rust.client: {
+ v1: SDK v1
+ v2: SDK v2
+}
+common: Shared Rust code
+sdk.rust.client -> sdk.generator
+sdk.rust.client -> web.axum.rust
+sdk.rust.tests: Headless E2E SDK tests
+
+common -> sdk.rust
+common -> web
+web.axum.wasm <- sdk.generator

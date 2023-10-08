@@ -1,5 +1,7 @@
 # Service to ingest Msgpack metrics over HTTP
 
+## Architecture overview 
+![Architecture overview](arch.svg)
 ## Rust
   - endpoint to consume HTTP metrics
     - Versioning: v1 and v2
