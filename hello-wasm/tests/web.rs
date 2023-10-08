@@ -39,7 +39,4 @@ async fn post_v1() {
             assert_eq!("hmm", format!("error: {:#?}", e))
         },
     }
-
-    // assert!(resp.is_ok());
-    assert_eq!(1, 2);
 }
