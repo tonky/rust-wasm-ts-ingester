@@ -46,7 +46,6 @@ async fn main() {
         .route("/", get(|| async { "Hello, World!" }))
         .route("/stats", get(stats))
         .route("/v1/ingest", post(ingest_metrics_v1))
-        // .with_state(Arc::clone(&shared_state))
         .route("/v2/ingest", post(ingest_metrics_v2))
         .with_state(Arc::clone(&shared_state))
         .merge(serve_static());
@@ -83,7 +82,7 @@ async fn ingest_metrics_v1(State(state): State<SharedState>, body: Bytes) -> Jso
 async fn ingest_metrics_v2(State(state): State<SharedState>, body: Bytes) -> Json<Value> {
     println!("ingest_metrics_v2: request body: {:?}", &body);
     let dec = general_purpose::STANDARD.decode(&body).unwrap();
-    let dr: hello_wasm::v1::MetricV1 = rmp_serde::from_slice(&dec).unwrap();
+    let dr: hello_wasm::v2::Metric = rmp_serde::from_slice(&dec).unwrap();
 
     let counter = match state.read().unwrap().db.get(&dr.auth_token) {
         Some(count) => count.clone(),

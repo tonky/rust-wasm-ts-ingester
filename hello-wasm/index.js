@@ -22,15 +22,15 @@ const greeting  = greet("Joe");
 console.log("Joe");
 
 
-const b64mp = message(1, "token", "2014-12-28T12:00:09Z");
-
 document.getElementById("result-greet").innerText = greeting;
 document.getElementById("result-message").innerText = b64mp;
 
 const response = await fetch("http://localhost:3000/");
 const hello = await response.text();
-
 document.getElementById("result-fetch").innerText = hello;
+
+// const b64mp = message(1, "token", "2014-12-28T12:00:09Z");
+const b64mp = message(1, "token", 18);
 
 
 async function postJSON(data) {

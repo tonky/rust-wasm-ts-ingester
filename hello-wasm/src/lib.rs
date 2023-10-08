@@ -1,11 +1,12 @@
 mod utils;
 pub mod v1;
+pub mod v2;
 
 // use anyhow::Result;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::JsFuture;
 use serde_wasm_bindgen;
-use web_sys::{console, Request, RequestInit, RequestMode, Response};
+use web_sys::{console, Request, RequestInit, RequestMode, Response, Url};
 use serde_json::{Value, json};
 use serde::{Serialize,Deserialize};
 use thiserror::Error;
@@ -120,7 +121,9 @@ let datetime_utc = datetime.with_timezone(&Utc);
 }
 
 #[wasm_bindgen]
-pub async fn post_metric(path: String, body: String) -> Result<JsValue, JsValue> {
+pub async fn post_metric(url: Url, body: String) -> Result<JsValue, JsValue> {
+    console::log_1(&format!(">> calling post on: {}", url.href()).into());
+
     let mut opts = RequestInit::new();
     opts.method("POST");
     opts.mode(RequestMode::Cors);
@@ -132,9 +135,9 @@ pub async fn post_metric(path: String, body: String) -> Result<JsValue, JsValue>
  */
     opts.body(Some(&JsValue::from_str(&body)));
 
-    let url = format!("http://localhost:3000{}", path);
+    // let url = format!("http://localhost:3000{}", path);
 
-    let request = Request::new_with_str_and_init(&url, &opts)?;
+    let request = Request::new_with_str_and_init(&url.href(), &opts)?;
 
     request
         .headers()
