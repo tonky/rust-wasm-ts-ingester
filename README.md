@@ -2,34 +2,38 @@
 
 ## Rust
   - endpoint to consume HTTP metrics
-    - Versioning
-    - Messagepack with custom 8601 time ext format
-  - Store in timeseries DB
+    - Versioning: v1 and v2
+    - Messagepack
 
-  - Generate JS SDK
+  - Generate JS and TS SDK
 
-  - Client SDK test page
-    - Usees JS SDK to publish versioned messages
+  - Client HTML test page ("/")
+    - Usees JS and TS SDK to publish versioned messages
 
-  - Summary page
-    - Svelte
-    - Realtime dashboard(rps, metrics) - websockets
-    - Usees JS SDK
-
-  - Architecture diagram D2
-
-  - Tracing?
-  - Logging?
-  - GCP deploy?
-
-## JS SDK
+## JS and TS SDK
   - WASM module:
     - serialization
     - deserialization
     - publishing metrics(HTTP POST)
-    - getting published summary
 
   - Versioned API publishing, matching server handlers
 
-## Out of scope
-  - Auth
+## How to run
+  1. Generate JS and TS bindings
+  ```
+      $ cd hello-wasm
+      $ wasm-pack build --target bundler
+  ```
+  2. Run web server
+  ```
+      $ cd web
+      $ cargo run
+  ```
+
+  3. Open test page on http://localhost:3000 and send v1 and v2 messages
+
+  4. To run tests
+  ```
+      $ cd hello-wasm
+      $ wasm-pack test --firefox --headless
+  ```
